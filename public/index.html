@@ -117,8 +117,8 @@
                 if (command !== '') {
                     try {
                         switch (command) {
-                            case 'test':
-                                term.echo("you just typed '" + command + "'");
+                            case 'help':
+                                term.echo("available cmds: whoami, date");
                                 break;
                             case 'date':
                                 term.pause();
@@ -126,14 +126,39 @@
                                 //$.jrpc is helper function which creates json-rpc request
                                 $.jrpc("date",
                                     id++,
-                                    "query", 
+                                    "now", 
                                     [command],
                                     function(data) {
                                       term.resume();
                                       if (data.error) {
                                         term.error(data.error.message);
                                       } else {
-                                        term.echo(data.result);
+                                        term.echo(data.now);
+                                      }
+                                    },
+                                    function(xhr, status, error) {
+                                      term.error('[AJAX] ' + status + 
+                                                 ' - Server reponse is: \n' + 
+                                                 xhr.responseText);
+                                      term.resume();
+                                    }
+                                ); // rpc call
+                                break;
+
+                            case 'whoami':
+                                term.pause();
+
+                                //$.jrpc is helper function which creates json-rpc request
+                                $.jrpc("whoami",
+                                    id++,
+                                    "now", 
+                                    [command],
+                                    function(data) {
+                                      term.resume();
+                                      if (data.error) {
+                                        term.error(data.error.message);
+                                      } else {
+                                        term.echo(data.who);
                                       }
                                     },
                                     function(xhr, status, error) {
