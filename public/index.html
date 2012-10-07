@@ -112,6 +112,7 @@
     <script>
 
         (function($) {
+            var id = 1;
             term = $('#term1').terminal(function(command, term) {
                 if (command !== '') {
                     try {
@@ -119,9 +120,31 @@
                             case 'test':
                                 term.echo("you just typed '" + command + "'");
                                 break;
-                            case 'dan':
-                                term.echo('danny boy');
+                            case 'date':
+                                term.pause();
+
+                                //$.jrpc is helper function which creates json-rpc request
+                                $.jrpc("date",
+                                    id++,
+                                    "query", 
+                                    [command],
+                                    function(data) {
+                                      term.resume();
+                                      if (data.error) {
+                                        term.error(data.error.message);
+                                      } else {
+                                        term.echo(data.result);
+                                      }
+                                    },
+                                    function(xhr, status, error) {
+                                      term.error('[AJAX] ' + status + 
+                                                 ' - Server reponse is: \n' + 
+                                                 xhr.responseText);
+                                      term.resume();
+                                    }
+                                ); // rpc call
                                 break;
+
                             default:
                                 var result = window.eval(command);
                                 if (result !== undefined) {
