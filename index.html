@@ -98,7 +98,11 @@
     </section>
 
     <footer>
-        <div id="footerLeft"><a href="http://about.me/danackerson">Dan Ackerson</a></div>
+        <div id="footerLeft">
+            <a href="http://about.me/danackerson">Dan Ackerson</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://www.facebook.com/kerstin.ackerson">Kerstin</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://www.facebook.com/sebastian.ackerson">Sebastian</a>
+        </div>
         <div id="footerRight">Background: <a href="http://imgur.com/N7Bnl">"The beauty of space."</a></div>
     </footer>
 
@@ -106,13 +110,24 @@
     <script src="js/jquery.mousewheel-min.js"></script>
     <script src="js/jquery.terminal-0.4.21.min.js"></script>
     <script>
-        jQuery(function($, undefined) {
+
+        (function($) {
             term = $('#term1').terminal(function(command, term) {
                 if (command !== '') {
                     try {
-                        var result = window.eval(command);
-                        if (result !== undefined) {
-                            term.echo(new String(result));
+                        switch (command) {
+                            case 'test':
+                                term.echo("you just typed '" + command + "'");
+                                break;
+                            case 'dan':
+                                term.echo('danny boy');
+                                break;
+                            default:
+                                var result = window.eval(command);
+                                if (result !== undefined) {
+                                    term.echo(new String(result));
+                                }
+                                break;
                         }
                     } catch(e) {
                         term.error(new String(e));
@@ -122,10 +137,18 @@
                 }
             }, {
                 greetings: 'Welcome Offworld',
-                name: 'js_demo',
+                name: 'term1',
+                enabled: false,
                 prompt: 'dan@ackerson.de:~ $ '
             });
-        });
+
+            term.mouseout(function() {
+                term.focus(false);
+            });
+            term.mouseover(function() {
+                term.focus(true);
+            });
+        })(jQuery);
     </script>
 
 </body>
