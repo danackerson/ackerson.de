@@ -26,13 +26,13 @@
 .terminal {
     font-family: FreeMono, monospace;
     color: lime;
-    font-size: 12px;
+    font-size: 16px;
     line-height: 14px;
-    height: 50%;
-    width: 33%;
+    height: 75%;
+    width: 45%;
     position: absolute;
-    top: 25%;
-    left: 15%;
+    top: 5%;
+    left: 5%;
     border: 1px solid transparent;
     padding:5px;
 }
@@ -48,7 +48,7 @@
     display: inline-block;
 }
 .terminal .cmd span.inverted {
-    background-color: #aaa;
+    background-color: lime;
     color: #000;
 }
 .terminal div::-moz-selection, .terminal span::-moz-selection {
@@ -60,7 +60,7 @@
     color: #000;
 }
 .terminal .terminal-output div.error, .terminal .terminal-output div.error div {
-    color: black;
+    color: yellow;
     background-color:gray;
 }
 .tilda {

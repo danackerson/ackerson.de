@@ -49,24 +49,21 @@
         #footerRight:hover {
             opacity:1.0;
         }
-        #terminal1 {
-            width:30%;
-            height:50%;
-            position:absolute;
-            left:15%;
-            top:25%;
-            color:white;
-            font-family:Courier, monospace;
-            -webkit-font-smoothing: antialiased;
-            font-size:12px;
-            opacity:0.2;
-            border: 1px solid transparent;
-            padding:5px;
+        .framePopup {
+          display: none;
+          position: absolute;
+          width: 280px;
+          padding: 10px;
+          background: #eeeeee;
+          color: #000000;
+          border: 1px solid #1a1a1a;
+          font-size: 90%;
         }
-        #terminal1:hover {
-            opacity:1.0;
-            border: 1px solid #333;
-            color:lime;
+        div#mapPopup {
+            background: orange;
+        }
+        div#mvvPopup {
+            background: blue;
         }
     </style>
 </head>
@@ -95,6 +92,17 @@
 
     <section>
         <div id="term1"></div>
+        <!-- HIDDEN / POP-UP DIV -->
+        <div class="framePopup" id="mapPopup">
+            <h3>Maps div Successfully Displayed</h3>
+            <p>Google maps driving directions</p>
+            <a style="float:right;" href="javascript:popupClose('mapPopup');">X</a>
+        </div>
+        <div class="framePopup" id="mvvPopup">
+            <h3>MVV div Successfully Displayed</h3>
+            <p>MVV Muenchen train directions</p>
+            <a style="float:right;" href="javascript:popupClose('mvvPopup');">X</a>
+        </div>
     </section>
 
     <footer>
@@ -118,56 +126,17 @@
                     try {
                         switch (command) {
                             case 'help':
-                                term.echo("available cmds: whoami, date");
+                                term.echo("[[gi;#00FF00;]`whoami`, `date`, `clear`]");
                                 break;
+
                             case 'date':
-                                term.pause();
-
-                                //$.jrpc is helper function which creates json-rpc request
-                                $.jrpc("date",
-                                    id++,
-                                    "now", 
-                                    [command],
-                                    function(data) {
-                                      term.resume();
-                                      if (data.error) {
-                                        term.error(data.error.message);
-                                      } else {
-                                        term.echo(data.now);
-                                      }
-                                    },
-                                    function(xhr, status, error) {
-                                      term.error('[AJAX] ' + status + 
-                                                 ' - Server reponse is: \n' + 
-                                                 xhr.responseText);
-                                      term.resume();
-                                    }
-                                ); // rpc call
+                            case 'whoami':
+                                simpleAjaxCall(command, "query-param");
                                 break;
 
-                            case 'whoami':
-                                term.pause();
-
-                                //$.jrpc is helper function which creates json-rpc request
-                                $.jrpc("whoami",
-                                    id++,
-                                    "now", 
-                                    [command],
-                                    function(data) {
-                                      term.resume();
-                                      if (data.error) {
-                                        term.error(data.error.message);
-                                      } else {
-                                        term.echo(data.who);
-                                      }
-                                    },
-                                    function(xhr, status, error) {
-                                      term.error('[AJAX] ' + status + 
-                                                 ' - Server reponse is: \n' + 
-                                                 xhr.responseText);
-                                      term.resume();
-                                    }
-                                ); // rpc call
+                            case 'map':
+                            case 'mvv':
+                                loadFrameMap(command);
                                 break;
 
                             default:
@@ -178,17 +147,46 @@
                                 break;
                         }
                     } catch(e) {
-                        term.error(new String(e));
+                        term.echo("[[guib;#FFFF00;]" + new String(e) + "] (try `help`)");
                     }
                 } else {
                    term.echo('');
                 }
             }, {
-                greetings: 'Welcome Offworld',
+                greetings: 'Welcome Offworld (type `help` for available cmds)',
                 name: 'term1',
                 enabled: false,
                 prompt: 'dan@ackerson.de:~ $ '
             });
+    
+            function loadFrameMap(id) {
+                $('#' + id + 'Popup').show();
+            }
+
+            /* simple ajax call where typed cmd string is SAME as remote URI AND data set */
+            function simpleAjaxCall(command, query_param) {
+                term.pause();
+
+                //$.jrpc is helper function which creates json-rpc request
+                $.jrpc(command,                         // uri
+                    id++,
+                    query_param, 
+                    [command],                          // command
+                    function(data) {
+                      term.resume();
+                      if (data.error) {
+                        term.error(data.error.message);
+                      } else {
+                        term.echo(data[command]);       // data set
+                      }
+                    },
+                    function(xhr, status, error) {
+                        term.error('[AJAX] ' + status + ' - Server reponse is: \n' + 
+                                    xhr.responseText);
+                        term.resume();
+                    }
+                ); // rpc call
+            }
 
             term.mouseout(function() {
                 term.focus(false);
@@ -197,6 +195,11 @@
                 term.focus(true);
             });
         })(jQuery);
+
+        function popupClose(id) {
+            $('#' + id).hide();
+            return false;
+        }
     </script>
 
 </body>

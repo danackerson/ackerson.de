@@ -7,7 +7,7 @@ module Homepage::Controllers
     end
 
     def post
-      @result = {:now=>Time.now.to_s}
+      @result = {:date=>Time.now.to_s}
 	    @headers['Content-Type'] = "application/json"
 			@result.to_json
     end
@@ -18,7 +18,7 @@ module Homepage::Controllers
   		user_ip = @env['REMOTE_ADDR']
   		user_agent = @env['HTTP_USER_AGENT']
 
-      @result = {:who=>"#{user_ip} (#{user_agent})"}
+      @result = {:whoami=>"#{user_ip} (#{user_agent})"}
 
 	    @headers['Content-Type'] = "application/json"
 			@result.to_json
