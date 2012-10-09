@@ -5,94 +5,14 @@
     <meta charset="UTF-8" />
     <title>Offworld</title>
     <link href="css/jquery.terminal.css" rel="stylesheet"/>
-    <style type="text/css">
-        html {
-            background: url(http://i.imgur.com/N7Bnl.jpg) no-repeat center center fixed;
-            /*background: url(http://i.imgur.com/8Ie6E.jpg) no-repeat center center fixed; <a href="http://imgur.com/8Ie6E">"Ice lake on Mars."</a>*/
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-            color:white;
-        }
-        a {
-            color:white;
-            text-decoration:none;
-        }
-        a:hover {
-            color:#E06C1F;
-        }
-        header,section,article,aside,footer{
-            display: block;
-        }
-        footer{
-            position:absolute;
-            bottom:5px;
-            right:5px;
-            width:100%;
-            color:white;
-            font-size:12px;
-        }
-        #footerLeft {
-            float:left;
-            padding-left:5px;
-            margin-left:5px;
-            opacity:0.2;
-        }
-        #footerLeft:hover {
-            opacity:1.0;
-        }
-        #footerRight {
-            float:right;
-            opacity:0.2;
-        }
-        #footerRight:hover {
-            opacity:1.0;
-        }
-        .framePopup {
-          display: none;
-          position: absolute;
-          width: 280px;
-          padding: 10px;
-          background: #eeeeee;
-          color: #000000;
-          border: 1px solid #1a1a1a;
-          font-size: 90%;
-        }
-        div#mapPopup {
-            background: orange;
-        }
-        div#mvvPopup {
-            background: blue;
-        }
-    </style>
+    <link href="css/offworld.css" rel="stylesheet"/>
 </head>
 
 <body>
-    <!--<header>
-        <nav>  
-            <ul>  
-                <li><a href="#">Blog</a></li>  
-                <li><a href="#">About</a></li>  
-                <li><a href="#">Archives</a></li>  
-                <li><a href="#">Contact</a></li>
-            </ul>  
-        </nav> 
-    </header>
-    
-    <section>
-        <article>
-            <header>
-                <h2>Title</h2>
-                <p>content</p>
-            </header>
-            <p>content</p>
-        </article>
-    </section>-->
-
     <section>
         <div id="term1"></div>
-        <!-- HIDDEN / POP-UP DIV -->
+
+        <!-- HIDDEN / POP-UP DIVS -->
         <div class="framePopup" id="mapPopup">
             <h3>Maps div Successfully Displayed</h3>
             <p>Google maps driving directions</p>
@@ -117,90 +37,7 @@
     <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
     <script src="js/jquery.mousewheel-min.js"></script>
     <script src="js/jquery.terminal-0.4.21.min.js"></script>
-    <script>
-
-        (function($) {
-            var id = 1;
-            term = $('#term1').terminal(function(command, term) {
-                if (command !== '') {
-                    try {
-                        switch (command) {
-                            case 'help':
-                                term.echo("[[gi;#00FF00;]`whoami`, `date`, `clear`]");
-                                break;
-
-                            case 'date':
-                            case 'whoami':
-                                simpleAjaxCall(command, "query-param");
-                                break;
-
-                            case 'map':
-                            case 'mvv':
-                                loadFrameMap(command);
-                                break;
-
-                            default:
-                                var result = window.eval(command);
-                                if (result !== undefined) {
-                                    term.echo(new String(result));
-                                }
-                                break;
-                        }
-                    } catch(e) {
-                        term.echo("[[guib;#FFFF00;]" + new String(e) + "] (try `help`)");
-                    }
-                } else {
-                   term.echo('');
-                }
-            }, {
-                greetings: 'Welcome Offworld (type `help` for available cmds)',
-                name: 'term1',
-                enabled: false,
-                prompt: 'dan@ackerson.de:~ $ '
-            });
-    
-            function loadFrameMap(id) {
-                $('#' + id + 'Popup').show();
-            }
-
-            /* simple ajax call where typed cmd string is SAME as remote URI AND data set */
-            function simpleAjaxCall(command, query_param) {
-                term.pause();
-
-                //$.jrpc is helper function which creates json-rpc request
-                $.jrpc(command,                         // uri
-                    id++,
-                    query_param, 
-                    [command],                          // command
-                    function(data) {
-                      term.resume();
-                      if (data.error) {
-                        term.error(data.error.message);
-                      } else {
-                        term.echo(data[command]);       // data set
-                      }
-                    },
-                    function(xhr, status, error) {
-                        term.error('[AJAX] ' + status + ' - Server reponse is: \n' + 
-                                    xhr.responseText);
-                        term.resume();
-                    }
-                ); // rpc call
-            }
-
-            term.mouseout(function() {
-                term.focus(false);
-            });
-            term.mouseover(function() {
-                term.focus(true);
-            });
-        })(jQuery);
-
-        function popupClose(id) {
-            $('#' + id).hide();
-            return false;
-        }
-    </script>
+    <script src="js/offworld.js"></script>
 
 </body>
 
