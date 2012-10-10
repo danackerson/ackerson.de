@@ -10,7 +10,7 @@ function popupClose(id) {
             try {
                 switch (commands[0]) {
                     case 'help':
-                        term.echo("[[gi;#00FF00;]`whoami`, `date`, `clear`, `drive`]");
+                        term.echo("[[gi;#00FF00;]`whoami`, `date`, `clear`, `drive [DESTINATION]`, `mvv`]");
                         break;
 
                     case 'date':
