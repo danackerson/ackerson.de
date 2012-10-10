@@ -6,6 +6,18 @@
     <title>Offworld</title>
     <link href="css/jquery.terminal.css" rel="stylesheet"/>
     <link href="css/offworld.css" rel="stylesheet"/>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-35450644-1']);
+      _gaq.push (['_gat._anonymizeIp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
 </head>
 
 <body>
@@ -13,15 +25,24 @@
         <div id="term1"></div>
 
         <!-- HIDDEN / POP-UP DIVS -->
-        <div class="framePopup" id="mapPopup">
-            <h3>Maps div Successfully Displayed</h3>
-            <p>Google maps driving directions</p>
-            <a style="float:right;" href="javascript:popupClose('mapPopup');">X</a>
+        <div class="framePopup" id="drivePopup">
+            <a class="closePopupButton" href="javascript:popupClose('drivePopup');"><img class="closePopupIcon" src="images/close_button.png"></a>
+            <div>
+              <label for="address" style="font-weight:bold;font-size:20px;">Destination:</label>
+              <input id="address" type="textbox" value="">
+              <input type="button" class="map_directions_button" value="Directions" onclick="getDrivingDirections()">
+            </div>
+            <div id="map_canvas"></div>
+            <div id="map_details">
+              <div id="home_location"></div>
+              <div id="directions" style="overflow:auto;height:85%;"></div>
+            </div>
         </div>
+
         <div class="framePopup" id="mvvPopup">
+            <a class="closePopupButton" href="javascript:popupClose('mvvPopup');"><img class="closePopupIcon" src="images/close_button.png"></a>
             <h3>MVV div Successfully Displayed</h3>
             <p>MVV Muenchen train directions</p>
-            <a style="float:right;" href="javascript:popupClose('mvvPopup');">X</a>
         </div>
     </section>
 
@@ -38,7 +59,9 @@
     <script src="js/jquery.mousewheel-min.js"></script>
     <script src="js/jquery.terminal-0.4.21.min.js"></script>
     <script src="js/offworld.js"></script>
-
+    <script src="js/offworld_google_maps.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCimfturb1elNiEElJS-01W7BtTjoHqPww&sensor=true&callback=init_googlemaps"></script>
+    
 </body>
 
 </html>

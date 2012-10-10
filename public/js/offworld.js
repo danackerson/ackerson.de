@@ -1,11 +1,16 @@
+function popupClose(id) {
+    $('#' + id).hide();
+}
+
 (function($) {
     var id = 1;
     term = $('#term1').terminal(function(command, term) {
-        if (command !== '') {
+        var commands = command.split(' ');
+        if (commands.length > 0) {
             try {
-                switch (command) {
+                switch (commands[0]) {
                     case 'help':
-                        term.echo("[[gi;#00FF00;]`whoami`, `date`, `clear`]");
+                        term.echo("[[gi;#00FF00;]`whoami`, `date`, `clear`, `drive`]");
                         break;
 
                     case 'date':
@@ -13,9 +18,18 @@
                         simpleAjaxCall(command, "query-param");
                         break;
 
-                    case 'map':
+                    case 'drive':
+                        showPopup(commands[0]);
+                        if (commands[1]) {
+                            document.getElementById('address').value = commands[1];
+                            getDrivingDirections();
+                        } else {
+                            document.getElementById('address').value = '';
+                        }
+                        break;
+
                     case 'mvv':
-                        loadFrameMap(command);
+                        showPopup(commands[0]);
                         break;
 
                     default:
@@ -38,7 +52,7 @@
         prompt: 'dan@ackerson.de:~ $ '
     });
 
-    function loadFrameMap(id) {
+    function showPopup(id) {
         $('#' + id + 'Popup').show();
     }
 
@@ -74,8 +88,3 @@
         term.focus(true);
     });
 })(jQuery);
-
-function popupClose(id) {
-    $('#' + id).hide();
-    return false;
-}
