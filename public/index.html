@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <title>Offworld</title>
-    <link href="css/jquery.terminal.css" rel="stylesheet"/>
-    <link href="css/offworld.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/jquery.terminal.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/offworld.css" />
+
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-35450644-1']);
@@ -26,10 +28,11 @@
 
         <!-- HIDDEN / POP-UP DIVS -->
         <div class="framePopup" id="drivePopup">
+            <p class="border">&nbsp;</p>
             <a class="closePopupButton" href="javascript:popupClose('drivePopup');"><img class="closePopupIcon" src="images/close_button.png"></a>
             <div>
               <label for="address" style="font-weight:bold;font-size:20px;">Destination:</label>
-              <input id="address" type="textbox" value="">
+              <input id="address" type="textbox" value=""> <!-- TODO - CANT WRITE IN THIS BOX?!? -->
               <input type="button" class="map_directions_button" value="Directions" onclick="getDrivingDirections()">
             </div>
             <div id="map_canvas"></div>
@@ -39,7 +42,8 @@
             </div>
         </div>
 
-        <div class="framePopup" id="mvvPopup">
+        <div class="framePopup ui-widget-content" id="mvvPopup">
+            <p class="border">&nbsp;</p>
             <a class="closePopupButton" href="javascript:popupClose('mvvPopup');"><img class="closePopupIcon" src="images/close_button.png"></a>
             <iframe id="iframeMVV" seamless="seamless" src="http://efa.mvv-muenchen.de/mobile/XSLT_TRIP_REQUEST2?language=de"></iframe>
         </div>
@@ -54,7 +58,8 @@
         <div id="footerRight">Background: <a href="http://imgur.com/N7Bnl">"The beauty of space."</a></div>
     </footer>
 
-    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
     <script src="js/jquery.mousewheel-min.js"></script>
     <script src="js/jquery.terminal-0.4.21.min.js"></script>
     <script src="js/offworld.js"></script>

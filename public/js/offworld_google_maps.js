@@ -1,5 +1,6 @@
 var geocoder;
 var map;
+var green_marker;
 var currentLatLng;
 var currentMarker;
 var homeMarker;
@@ -24,16 +25,38 @@ function handleNoGeolocation(errorFlag) {
     map.setCenter(options.position);
 }
 
+// TODO DELETE ANY PREVIOUS DESTINATIONS FROM MAP! (in map_directions div?)
+function emptyMap() {
+    var mapOptions = {
+      zoom: 8,
+      mapTypeId: google.maps.MapTypeId.ROADMAP  // ROADMAP, SATELLITE, HYBRID, TERRAIN
+    };
+    
+    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+
+    green_marker = new google.maps.MarkerImage(
+        'http://maps.gstatic.com/mapfiles/markers2/marker_greenA.png',
+        new google.maps.Size(32, 32),   // size
+        new google.maps.Point(0,0),     // origin
+        new google.maps.Point(16, 32)   // anchor
+    );
+
+    homeMarker = new google.maps.Marker({
+        map: map,
+        icon: green_marker,
+        position: currentLatLng
+    });
+
+    map.setCenter(currentLatLng);
+    document.getElementById('home_location').innerHTML = 
+      "<p style='font-size:14px;margin-left:10px;margin-bottom:0px;'><img style='height:24px;width:16px;vertical-align:middle;' src='https://maps.gstatic.com/mapfiles/markers2/marker_greenA.png'>&nbsp;&nbsp;&nbsp;<b>" + homeLocation + "</b></p><hr>";
+    document.getElementById('directions').innerHTML = "";
+}
+
 function init_googlemaps() {
     geocoder = new google.maps.Geocoder();
 
-    var mapOptions = {
-      zoom: 8,
-      //center: new google.maps.LatLng(-34.397, 150.644),
-      mapTypeId: google.maps.MapTypeId.ROADMAP  // ROADMAP, SATELLITE, HYBRID, TERRAIN
-    };
-    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
-
+    
     // Try HTML5 geolocation
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -44,30 +67,27 @@ function init_googlemaps() {
         // after adding markers and/or infoWindows the center of the map changes 
         // and subsequent calls to get the location from .getCenter() will be WRONG!
         currentLatLng = pos;
-        var green_marker = new google.maps.MarkerImage(
+        geocoder.geocode({'latLng': currentLatLng}, function(results, status) {
+              if (status == google.maps.GeocoderStatus.OK) {
+                if (results[1]) {
+                  homeLocation = results[1].formatted_address;
+                  document.getElementById('home_location').innerHTML = 
+                    "<p style='font-size:14px;margin-left:10px;margin-bottom:0px;'><img style='height:24px;width:16px;vertical-align:middle;' src='https://maps.gstatic.com/mapfiles/markers2/marker_greenA.png'>&nbsp;&nbsp;&nbsp;<b>" + homeLocation + "</b></p><hr>";
+                }
+              } 
+            });
+
+          green_marker = new google.maps.MarkerImage(
             'http://maps.gstatic.com/mapfiles/markers2/marker_greenA.png',
             new google.maps.Size(32, 32),   // size
             new google.maps.Point(0,0),     // origin
             new google.maps.Point(16, 32)   // anchor
-        );
-
-        homeMarker = new google.maps.Marker({
+          );
+          homeMarker = new google.maps.Marker({
             map: map,
             icon: green_marker,
             position: currentLatLng
-        });
-
-        map.setCenter(pos);
-
-        geocoder.geocode({'latLng': currentLatLng}, function(results, status) {
-              if (status == google.maps.GeocoderStatus.OK) {
-                if (results[1]) {
-              homeLocation = results[1].formatted_address;
-              document.getElementById('home_location').innerHTML = 
-                "<p style='font-size:14px;margin-left:10px;margin-bottom:0px;'><img style='height:24px;width:16px;vertical-align:middle;' src='https://maps.gstatic.com/mapfiles/markers2/marker_greenA.png'>&nbsp;&nbsp;&nbsp;<b>" + homeLocation + "</b></p><hr>";
-                }
-              } 
-            });
+          });
 
       }, function() {
         handleNoGeolocation(true);
@@ -80,6 +100,8 @@ function init_googlemaps() {
 
 function getDrivingDirections() {
     var address = document.getElementById('address').value;
+    if (!address) address = currentLatLng;
+
     var mapOptions = {
       zoom: 8,
       mapTypeId: google.maps.MapTypeId.ROADMAP  // ROADMAP, SATELLITE, HYBRID, TERRAIN
@@ -88,15 +110,14 @@ function getDrivingDirections() {
     map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
     geocoder.geocode( { 'address': address }, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        currentLatLng = results[0].geometry.location; 
-        map.setCenter(currentLatLng);
+        destinationLatLng = results[0].geometry.location; 
         
         directionsDisplay = new google.maps.DirectionsRenderer();
         directionsDisplay.setMap(map); // clear any past results
 
         var directionsRequest = {
           origin: homeMarker.position,
-          destination: currentLatLng,
+          destination: destinationLatLng,
           travelMode: google.maps.TravelMode.DRIVING // DRIVING, WALKING, BICYCLING, TRANSIT
         }
 

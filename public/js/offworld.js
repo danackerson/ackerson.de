@@ -4,6 +4,10 @@ function popupClose(id) {
 
 (function($) {
     var id = 1;
+    $( "#mvvPopup" ).draggable({ handle: "p.border" });
+    $( "#drivePopup" ).draggable({ handle: "p.border" });
+    $( "div, p.border" ).disableSelection();
+
     term = $('#term1').terminal(function(command, term) {
         var commands = command.split(' ');
         if (commands.length > 0) {
@@ -25,6 +29,7 @@ function popupClose(id) {
                             getDrivingDirections();
                         } else {
                             document.getElementById('address').value = '';
+                            emptyMap();
                         }
                         break;
 
