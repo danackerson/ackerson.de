@@ -69,6 +69,8 @@ div.framePopup {
 }
 div#drivePopup {
     background: white;
+    height:90%;
+    top:20px;
 }
 div#mvvPopup {
     background: #B2C900;
