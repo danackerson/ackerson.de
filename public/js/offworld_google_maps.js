@@ -1,6 +1,7 @@
 var geocoder;
 var map;
 var green_marker;
+var currentPosition;
 var currentLatLng;
 var currentMarker;
 var homeMarker;
@@ -22,27 +23,20 @@ function init_googlemaps() {
 }
 
 function getCurrentLocation() {
-  if (navigator.geolocation) { // Try HTML5 geolocation
-    navigator.geolocation.getCurrentPosition(function(position) {
-      currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
-      homeLocation = geocoder.geocode({'latLng': currentLatLng}, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          if (results[1]) {
-            homeLocation = results[1].formatted_address;
-            document.getElementById('home_location').innerHTML = 
-              "<p style='font-size:14px;margin-left:10px;margin-bottom:0px;'><img style='height:24px;width:16px;vertical-align:middle;' src='/images/marker_greenA.png'>&nbsp;&nbsp;&nbsp;<b>" + homeLocation + "</b></p><hr>";
-            return homeLocation;
-          }
+  navigator.geolocation.getCurrentPosition(function(position) {
+    currentPosition = position;
+    currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    homeLocation = geocoder.geocode({'latLng': currentLatLng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[1]) {
+          homeLocation = results[1].formatted_address;
+          document.getElementById('home_location').innerHTML = 
+            "<p style='font-size:14px;margin-left:10px;margin-bottom:0px;'><img style='height:24px;width:16px;vertical-align:middle;' src='/images/marker_greenA.png'>&nbsp;&nbsp;&nbsp;<b>" + homeLocation + "</b></p><hr>";
+          return homeLocation;
         }
-      });
-    }, function() {
-      handleNoGeolocation(true);
+      }
     });
-  } else {
-    // Browser doesn't support Geolocation
-    handleNoGeolocation(false);
-  }
+  }, showGeoLocationError);
 
   return currentLatLng;
 }
@@ -61,7 +55,7 @@ function getDrivingDirections() {
   geocoder.geocode( { 'address': address }, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       destinationLatLng = results[0].geometry.location; 
-      if ($.browser.mozilla && ff_first_load) {
+      if (ff_first_load) {
         alert('Driving to: ' + destinationLatLng);
         ff_first_load = false;
       }
@@ -111,22 +105,23 @@ function getDrivingDirections() {
       alert('Geocode was not successful for the following reason: ' + status);
     }
   });
+
+  return currentLatLng;
 }
 
-function handleNoGeolocation(errorFlag) {
-    if (errorFlag) {
-      var content = 'Error: The Geolocation service failed.';
-    } else {
-      var content = 'Error: Your browser doesn\'t support geolocation.';
-    }
-
-    var options = {
-      map: map,
-      position: new google.maps.LatLng(60, 105),
-      content: content
-    };
-
-    //var infowindow = new google.maps.InfoWindow(options);
-    map.setCenter(options.position);
+function showGeoLocationError(error) {
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+      alert("User denied the request for Geolocation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+      alert("Location information is unavailable.");
+      break;
+    case error.TIMEOUT:
+      alert("The request to get user location timed out.");
+      break;
+    case error.UNKNOWN_ERROR:
+      alert("An unknown error occurred.");
+      break;
+  }
 }
-
