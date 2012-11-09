@@ -4,11 +4,15 @@ module Homepage::Controllers
       # to retrieve the JSON POST request params, read the rack.input stream!
       input = @env["rack.input"].read
       browser_post_json = JSON.parse decode(input, env['HTTP_CONTENT_ENCODING'])
-      
-      lat_lng_object = browser_post_json['params'][0]
-      lat_lng = "LAT: #{lat_lng_object['latitude']}, LNG: #{lat_lng_object['longitude']}"
-      
-      @result = {:weather=>lat_lng}
+
+      code = 'UKXX0086' # default weather location code (in case we can't find a match)
+      path = "http://xoap.weather.com/search/search?where=#{browser_post_json['params']}"
+      doc = XML::Document.file(path)
+      doc.find('//search/loc').each do |s|
+        code = s.attributes['id']
+      end
+
+      @result = {:weather=>code}
       @headers['Content-Type'] = "application/json"
       @result.to_json
     end

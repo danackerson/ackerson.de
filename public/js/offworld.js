@@ -6,7 +6,7 @@ function popupClose(id) {
   var id = 1;
   var greeting = "Welcome Offworld (type `help` for commands)";
   var drive_msg = "[[g;#FFFF00;]drive] <DESTINATION>: google directions from your location\r\n\r\n";
-  var weather_msg = "[[g;#FFFF00;]weather]: show local weather forecast (coming soon)\r\n\r\n";
+  var weather_msg = "[[g;#FFFF00;]weather]: show local weather forecast (popup window!)\r\n\r\n";
   var mvv_msg = "[[g;#FFFF00;]mvv]: access Munich's public transportation\r\n\r\n";
   var whoami_msg = "[[g;#FFFF00;]whoami]: your browser info and IP address\r\n\r\n";
   var date_msg = "[[g;#FFFF00;]date]: my server date/time\r\n\r\n";
@@ -54,7 +54,7 @@ function popupClose(id) {
               document.getElementById('address').value = 'Munich';
             }
 
-              getDrivingDirections();
+            getDrivingDirections();
             break;
 
           case 'mvv':
@@ -100,10 +100,25 @@ function popupClose(id) {
   function getPosition() {
     if (currentPosition == undefined) {
       navigator.geolocation.getCurrentPosition(function(position) {
-        simpleAjaxCall('weather', position.coords);
-        }, showGeoLocationError);
+        currentPosition = position;
+        currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        homeLocation = geocoder.geocode({'latLng': currentLatLng}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            if (results[0]) {
+              // here we have to carefully scan through results and find city, country ('locality', 'political' in google geocode speak)
+              for (i = 0; i < results.length; i++) {
+                if (results[i].types[0] == 'locality' && results[i].types[1] == 'political') {
+                  homeLocation = results[i].formatted_address;
+                  break;
+                }
+              }
+              if (homeLocation != undefined) simpleAjaxCall('weather', homeLocation);
+            }
+          }
+        });
+      }, showGeoLocationError);
     } else {
-      simpleAjaxCall('weather', currentPosition.coords);
+      simpleAjaxCall('weather', homeLocation);
     }
   }
   function showPopup(id) {
@@ -118,13 +133,17 @@ function popupClose(id) {
     $.jrpc(command,                         // uri
       id++,
       'post', 
-      [query_param],                          // command
+      query_param,                          // command
       function(data) {
         term.resume();
         if (data.error) {
           term.error(data.error.message);
         } else {
-          term.echo(data[command]);       // data set
+          if (command == 'weather') {
+            url = 'http://www.weather.com/weather/map/interactive/' + data[command] + ':1?interactiveMapLayer=sat&baseMap=r&zoom=10'
+            $(this).target = "_blank";
+            window.open(url);
+          } else term.echo(data[command]);       // data set
         }
       },
       function(xhr, status, error) {
