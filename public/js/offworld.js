@@ -84,7 +84,7 @@ function popupClose(id) {
     enabled: false,
     prompt: 'dan@ackerson.de:~ $ ',
     onInit: function(term) {
-      typedPrompt(term, 'help', 250);
+      //typedPrompt(term, 'help', 250);
     },
     onClear: function(term) {
       term.echo(greeting);
@@ -140,9 +140,30 @@ function popupClose(id) {
           term.error(data.error.message);
         } else {
           if (command == 'weather') {
-            url = 'http://www.weather.com/weather/map/interactive/' + data[command] + ':1?interactiveMapLayer=sat&baseMap=r&zoom=10'
-            $(this).target = "_blank";
-            window.open(url);
+            showPopup(command);
+            var weatherReport = document.getElementById("weatherreport");
+            weatherReport.innerHTML = "\
+            <div id='weatherreport'>\
+                <div style='float:left;margin:10px;'>\
+                    <div>Now</div>\
+                    <div>\
+                        <a href="+data['weather']['ob_url']+" target='_blank'>\
+                        <img src="+data['weather']['icon_url']+" width='44' height='44' alt="+data['weather']['weather']+">\
+                        </a>\
+                    </div>\
+                    <div>"+data['weather']['weather']+"</div>\
+                </div>\
+                <div style='float:left;margin:10px;'>\
+                    <div>Temperature</div>\
+                    <div>\
+                        <span style='font-strength:bold;'>"+data['weather']['temperature_string']+"</span>\
+                    </div>\
+                    <div>Feels Like\
+                        <span style='font-strength:bold;'>"+data['weather']['feelslike_string']+"</span>\
+                    </div>\
+                </div>\
+            </div>\
+            ";
           } else term.echo(data[command]);       // data set
         }
       },

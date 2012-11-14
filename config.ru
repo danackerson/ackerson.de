@@ -4,6 +4,7 @@ require 'rack'
 require 'json'
 require 'camping'
 require 'xml'
+require 'net/http'
 
 Camping.goes :Homepage
 
