@@ -1,6 +1,6 @@
 html {
-    /*background: url(http://i.imgur.com/N7Bnl.jpg) no-repeat center center fixed;
-    background: url(http://i.imgur.com/8Ie6E.jpg) no-repeat center center fixed; <a href="http://imgur.com/8Ie6E">"Ice lake on Mars."</a>*/
+    background: url(http://i.imgur.com/N7Bnl.jpg) no-repeat center center fixed;
+    /*background: url(http://i.imgur.com/8Ie6E.jpg) no-repeat center center fixed; <a href="http://imgur.com/8Ie6E">"Ice lake on Mars."</a>*/
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -80,8 +80,8 @@ div#mvvPopup {
     left:480px;
 }
 div#weatherPopup {
-    background: #B2C900;
-    width: 40%;
+    background: white;
+    width: 50%;
     height: 65%;
     left:580px;
     top:20px;

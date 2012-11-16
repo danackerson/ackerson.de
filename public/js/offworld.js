@@ -15,7 +15,8 @@ function popupClose(id) {
 
   $( "#mvvPopup" ).draggable({ handle: "p.border" });
   $( "#drivePopup" ).draggable({ handle: "p.border" });
-  
+  $( "#weatherPopup" ).draggable({ handle: "p.border" });
+
   var anim = false;
   function typedPrompt(term, message, delay) {
     anim = true;
@@ -84,7 +85,7 @@ function popupClose(id) {
     enabled: false,
     prompt: 'dan@ackerson.de:~ $ ',
     onInit: function(term) {
-      //typedPrompt(term, 'help', 250);
+      typedPrompt(term, 'help', 250);
     },
     onClear: function(term) {
       term.echo(greeting);
@@ -98,10 +99,11 @@ function popupClose(id) {
   });
 
   function getPosition() {
-    if (currentPosition == undefined) {
+    if (currentLatLng == undefined) {
       navigator.geolocation.getCurrentPosition(function(position) {
         currentPosition = position;
         currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        simpleAjaxCall('weather', currentLatLng);
         homeLocation = geocoder.geocode({'latLng': currentLatLng}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
             if (results[0]) {
@@ -112,13 +114,12 @@ function popupClose(id) {
                   break;
                 }
               }
-              if (homeLocation != undefined) simpleAjaxCall('weather', homeLocation);
             }
           }
         });
       }, showGeoLocationError);
     } else {
-      simpleAjaxCall('weather', homeLocation);
+      simpleAjaxCall('weather', currentLatLng);
     }
   }
   function showPopup(id) {
@@ -141,29 +142,45 @@ function popupClose(id) {
         } else {
           if (command == 'weather') {
             showPopup(command);
-            var weatherReport = document.getElementById("weatherreport");
-            weatherReport.innerHTML = "\
-            <div id='weatherreport'>\
+            var forecast = data['forecastday'];
+            var weatherForecast = document.getElementById("forecastweather");
+            weatherForecast.innerHTML = "";
+            for(var i=0;i<forecast.length;i++){
+                weatherForecast.innerHTML += "\
                 <div style='float:left;margin:10px;'>\
-                    <div>Now</div>\
-                    <div>\
-                        <a href="+data['weather']['ob_url']+" target='_blank'>\
-                        <img src="+data['weather']['icon_url']+" width='44' height='44' alt="+data['weather']['weather']+">\
-                        </a>\
+                    <span style='float:left;'>"+forecast[i]['date']['weekday_short']+",&nbsp;"+forecast[i]['date']['monthname']+" "+forecast[i]['date']['day']+"</span>\
+                    <div style='float:left;clear:left;margin-right:5px;'>\
+                        <span style='font-weight:bold;'>"+forecast[i]['low']['celsius']+"&nbsp;&#8451;</span>\
+                        <img src="+forecast[i]['icon_url']+" width='44' height='44' alt="+forecast[i]['conditions']+">\
+                        <span style='font-weight:bold;'>"+forecast[i]['high']['celsius']+"&nbsp;&#8451;</span>\
+                    </div>";
+                    if (i+1 < forecast.length) {
+                        weatherForecast.innerHTML += "<div style='border-right:1px solid lightgray;float:left;height:90px;'>&nbsp;</div>";
+                    }
+                weatherForecast.innerHTML += "</div>";
+            }
+
+            var weatherReport = document.getElementById("currentweather");
+            weatherReport.innerHTML = "<span style='font-weight:bold;color:darkblue;'>Weather for "+homeLocation+"</span>\
+                <div id='weatherreport'>\
+                    <div style='float:left;margin-left:10px;'>\
+                        <div>\
+                            <a target='_blank' href="+data['current']['ob_url']+">\
+                            <img src="+data['current']['icon_url']+" width='44' height='44' alt="+data['current']['weather']+">\
+                            </a>\
+                        </div>\
+                        <div style='margin-left:-10px;'>"+data['current']['weather']+"</div>\
                     </div>\
-                    <div>"+data['weather']['weather']+"</div>\
+                    <div style='float:left;margin-top:10px;margin-left:25px;text-align:left;'>\
+                        <div style=''>Current \
+                            <span style='font-weight:bold;'>"+data['current']['temperature_string']+"</span>\
+                        </div>\
+                        <div>Feels Like\
+                            <span style='font-weight:bold;'>"+data['current']['feelslike_string']+"</span>\
+                        </div>\
+                    </div>\
                 </div>\
-                <div style='float:left;margin:10px;'>\
-                    <div>Temperature</div>\
-                    <div>\
-                        <span style='font-strength:bold;'>"+data['weather']['temperature_string']+"</span>\
-                    </div>\
-                    <div>Feels Like\
-                        <span style='font-strength:bold;'>"+data['weather']['feelslike_string']+"</span>\
-                    </div>\
-                </div>\
-            </div>\
-            ";
+                ";
           } else term.echo(data[command]);       // data set
         }
       },
