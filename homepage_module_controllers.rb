@@ -6,12 +6,12 @@ module Homepage::Controllers
       browser_post_json = JSON.parse decode(input, env['HTTP_CONTENT_ENCODING'])
 
       # Lat / Lng wunderground.com solution - I signed up for an API key
-      url = "http://api.wunderground.com/api//conditions/q/#{browser_post_json['params']['jb']},#{browser_post_json['params']['kb']}.json"
+      url = "http://api.wunderground.com/api/c5060046bbda0736/conditions/q/#{browser_post_json['params']['jb']},#{browser_post_json['params']['kb']}.json"
       resp = Net::HTTP.get_response(URI.parse(url))
       data = JSON.parse resp.body
       current = data['current_observation']
 
-      url = "http://api.wunderground.com/api//forecast/q/#{browser_post_json['params']['jb']},#{browser_post_json['params']['kb']}.json"
+      url = "http://api.wunderground.com/api/c5060046bbda0736/forecast/q/#{browser_post_json['params']['jb']},#{browser_post_json['params']['kb']}.json"
       resp = Net::HTTP.get_response(URI.parse(url))
       data = JSON.parse resp.body
       forecast = data['forecast']['simpleforecast']['forecastday']

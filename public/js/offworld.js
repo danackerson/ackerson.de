@@ -1,6 +1,29 @@
 function popupClose(id) {
   $('#' + id).hide();
 }
+function showPopup(id) {
+  $('#' + id + 'Popup').fadeIn('slow');
+}
+$( "#mvvRoutePopup").draggable({ handle: "p.border" });
+
+function mvvRoute(origin, destination) {
+  var d = new Date();
+  var year = d.getFullYear();
+  var month = d.getMonth() + 1;
+  var day = d.getDate();
+  var hour = d.getHours();
+  var minute = d.getMinutes();
+
+  var url = "http://efa.mvv-muenchen.de/mvv/XSLT_TRIP_REQUEST2?&language=de"+
+    "&anyObjFilter_origin=0&sessionID=0&itdTripDateTimeDepArr=dep&type_destination=any"+
+    "&itdDateMonth="+month+"&itdTimeHour="+hour+"&anySigWhenPerfectNoOtherMatches=1"+
+    "&locationServerActive=1&name_origin="+origin+"&itdDateDay="+day+"&type_origin=any"+
+    "&name_destination="+destination+"&itdTimeMinute="+minute+"&Session=0&stateless=1"+
+    "&SpEncId=0&itdDateYear="+year;
+  $('#iframeMVVRoute').attr('src', url);
+
+  showPopup('mvvRoute');
+}
 
 (function($) {
   var id = 1;
@@ -48,7 +71,7 @@ function popupClose(id) {
 
           case 'drive':
             showPopup(commands[0]);
-            
+
             if (commands[1]) {
               document.getElementById('address').value = commands[1];
             } else {
@@ -67,14 +90,15 @@ function popupClose(id) {
             break;
 
           default:
+            /*jslint es5: true */
             var result = window.eval(command);
             if (result !== undefined) {
-                term.echo(new String(result));
+                term.echo(result);
             }
             break;
         }
       } catch(e) {
-        term.echo("[[guib;#FFFF00;]" + new String(e) + "] (try `help`)");
+        term.echo("[[guib;#FFFF00;]" + e + "] (try `help`)");
       }
     } else {
       term.echo('');
@@ -85,7 +109,7 @@ function popupClose(id) {
     enabled: false,
     prompt: 'dan@ackerson.de:~ $ ',
     onInit: function(term) {
-      typedPrompt(term, 'help', 250);
+      //typedPrompt(term, 'help', 250);
     },
     onClear: function(term) {
       term.echo(greeting);
@@ -99,7 +123,7 @@ function popupClose(id) {
   });
 
   function getPosition() {
-    if (currentLatLng == undefined) {
+    if (currentLatLng === undefined) {
       navigator.geolocation.getCurrentPosition(function(position) {
         currentPosition = position;
         currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -122,9 +146,6 @@ function popupClose(id) {
       simpleAjaxCall('weather', currentLatLng);
     }
   }
-  function showPopup(id) {
-    $('#' + id + 'Popup').fadeIn('slow');
-  }
 
   /* simple ajax call where typed cmd string is SAME as remote URI AND data set */
   function simpleAjaxCall(command, query_param) {
@@ -133,7 +154,7 @@ function popupClose(id) {
     //$.jrpc is helper function which creates json-rpc request
     $.jrpc(command,                         // uri
       id++,
-      'post', 
+      'post',
       query_param,                          // command
       function(data) {
         term.resume();
@@ -146,6 +167,7 @@ function popupClose(id) {
             var weatherForecast = document.getElementById("forecastweather");
             weatherForecast.innerHTML = "";
             for(var i=0;i<forecast.length;i++){
+                /*jshint multistr: true */
                 weatherForecast.innerHTML += "\
                 <div style='float:left;margin:10px;'>\
                     <span style='float:left;'>"+forecast[i]['date']['weekday_short']+",&nbsp;"+forecast[i]['date']['monthname']+" "+forecast[i]['date']['day']+"</span>\
@@ -185,7 +207,7 @@ function popupClose(id) {
         }
       },
       function(xhr, status, error) {
-        term.error('[AJAX] ' + status + ' - Server reponse is: \n' + 
+        term.error('[AJAX] ' + status + ' - Server reponse is: \n' +
                     xhr.responseText);
         term.resume();
       }

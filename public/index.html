@@ -25,7 +25,9 @@
 <body>
     <section>
         <div id="term1"></div>
-        
+        <div id="links">
+            <a href="javascript:mvvRoute('M%20Hbf', 'Schwabhausen');"><img src="images/schwab.gif" width="32px" alt="Train home" title="Train home"></a>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/bahn.png" width="32px">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:mvvRoute('Schwabhausen', 'M%20Hbf');"><img src="images/munich.png" width="32px" alt="Train to Munich" title="Train to Munich"></a>
+        </div>
         <!-- HIDDEN / POP-UP DIVS -->
         <div class="framePopup ui-widget-content" id="drivePopup">
             <p class="border">&nbsp;</p>
@@ -58,6 +60,12 @@
             <a class="closePopupButton" href="javascript:popupClose('mvvPopup');"><img class="closePopupIcon" src="images/close_button.png"></a>
             <iframe id="iframeMVV" seamless="seamless" src="http://efa.mvv-muenchen.de/mobile/XSLT_TRIP_REQUEST2?language=de"></iframe>
         </div>
+
+        <div class="framePopup ui-widget-content" id="mvvRoutePopup">
+            <p class="border">&nbsp;</p>
+            <a class="closePopupButton" href="javascript:popupClose('mvvRoutePopup');"><img class="closePopupIcon" src="images/close_button.png"></a>
+            <iframe id="iframeMVVRoute" seamless="seamless" src=""></iframe>
+        </div>
     </section>
 
     <footer>
@@ -69,10 +77,10 @@
         <div id="footerRight">Background: <a href="http://imgur.com/N7Bnl">"The beauty of space."</a></div>
     </footer>
 
-    <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-    <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
-    <script src="js/jquery.mousewheel-min.js"></script>
-    <script src="js/jquery.terminal-0.4.21.min.js"></script>
+    <script src="js/jquery-2.0.3.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+    <script src="js/jquery.mousewheel.js"></script>
+    <script src="js/jquery.terminal-0.7.0.min.js"></script>
     <script src="js/offworld.js"></script>
     <script src="js/offworld_google_maps.js"></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCimfturb1elNiEElJS-01W7BtTjoHqPww&sensor=true&callback=init_googlemaps"></script>
