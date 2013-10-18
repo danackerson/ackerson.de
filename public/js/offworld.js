@@ -27,7 +27,7 @@ function mvvRoute(origin, destination) {
 
 (function($) {
   var id = 1;
-  var greeting = "Welcome Offworld (type `help` for commands)";
+  var greeting = "Welcome Offworld (type help)";
   var drive_msg = "[[g;#FFFF00;]drive] <DESTINATION>: google directions from your location\r\n\r\n";
   var weather_msg = "[[g;#FFFF00;]weather]: show local weather forecast (popup window!)\r\n\r\n";
   var mvv_msg = "[[g;#FFFF00;]mvv]: access Munich's public transportation\r\n\r\n";
