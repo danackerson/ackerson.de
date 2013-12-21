@@ -5,15 +5,24 @@ module Homepage::Controllers
       input = @env["rack.input"].read
       browser_post_json = JSON.parse decode(input, env['HTTP_CONTENT_ENCODING'])
 
+      lat = browser_post_json['params']['lb']
+      lng = browser_post_json['params']['mb']
+      if lat == nil
+        lat = browser_post_json['params']['nb']
+        lng = browser_post_json['params']['ob']
+      end
+
       # Lat / Lng wunderground.com solution - I signed up for an API key
-      url = "http://api.wunderground.com/api/c5060046bbda0736/conditions/q/#{browser_post_json['params']['lb']},#{browser_post_json['params']['mb']}.json"
+      url = "http://api.wunderground.com/api/c5060046bbda0736/conditions/q/#{lat},#{lng}.json"
       resp = Net::HTTP.get_response(URI.parse(url))
       data = JSON.parse resp.body
       current = data['current_observation']
 
-      url = "http://api.wunderground.com/api/c5060046bbda0736/forecast/q/#{browser_post_json['params']['lb']},#{browser_post_json['params']['mb']}.json"
+      url = "http://api.wunderground.com/api/c5060046bbda0736/forecast/q/#{lat},#{lng}.json"
+      puts "**DA**: #{url}"
       resp = Net::HTTP.get_response(URI.parse(url))
       data = JSON.parse resp.body
+      puts "**DA2**: #{data}"
       forecast = data['forecast']['simpleforecast']['forecastday']
 
       code = { 

@@ -126,7 +126,7 @@ function mvvRoute(origin, destination) {
     if (currentLatLng === undefined) {
       navigator.geolocation.getCurrentPosition(function(position) {
         currentPosition = position;
-        currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        currentLatLng = new google.maps.LatLng(parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
         simpleAjaxCall('weather', currentLatLng);
         homeLocation = geocoder.geocode({'latLng': currentLatLng}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {

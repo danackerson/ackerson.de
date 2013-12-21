@@ -25,7 +25,7 @@ function init_googlemaps() {
 function getCurrentLocation() {
   navigator.geolocation.getCurrentPosition(function(position) {
     currentPosition = position;
-    currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    currentLatLng = new google.maps.LatLng(parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
     homeLocation = geocoder.geocode({'latLng': currentLatLng}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[1]) {
