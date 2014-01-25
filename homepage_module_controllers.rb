@@ -5,12 +5,18 @@ module Homepage::Controllers
       input = @env["rack.input"].read
       browser_post_json = JSON.parse decode(input, env['HTTP_CONTENT_ENCODING'])
 
-      lat = browser_post_json['params']['lb']
-      lng = browser_post_json['params']['mb']
-      if lat == nil
-        lat = browser_post_json['params']['nb']
-        lng = browser_post_json['params']['ob']
-      end
+      params = browser_post_json['params']
+      i = 0
+      lat = '0'
+      lng = '0'
+      params.each { |index,param|
+        if i == 0
+          lat = param
+        else
+          lng = param
+        end
+        i += 1
+      }
 
       # Lat / Lng wunderground.com solution - I signed up for an API key
       url = "http://api.wunderground.com/api/c5060046bbda0736/conditions/q/#{lat},#{lng}.json"
@@ -19,10 +25,8 @@ module Homepage::Controllers
       current = data['current_observation']
 
       url = "http://api.wunderground.com/api/c5060046bbda0736/forecast/q/#{lat},#{lng}.json"
-      puts "**DA**: #{url}"
       resp = Net::HTTP.get_response(URI.parse(url))
       data = JSON.parse resp.body
-      puts "**DA2**: #{data}"
       forecast = data['forecast']['simpleforecast']['forecastday']
 
       code = { 
