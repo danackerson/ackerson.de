@@ -80,10 +80,10 @@ div#drivePopup {
 }
 div#mvvRoutePopup {
     background: white;
-    width:50%;
+    width:70%;
     height:90%;
     top:20px;
-    left:480px;
+    left:280px;
 }
 div#mvvPopup {
     background: #B2C900;
