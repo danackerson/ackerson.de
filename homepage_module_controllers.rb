@@ -1,11 +1,9 @@
 module Homepage::Controllers
   class Weather
     def post 
-      # to retrieve the JSON POST request params, read the rack.input stream!
-      input = @env["rack.input"].read
-      browser_post_json = JSON.parse decode(input, env['HTTP_CONTENT_ENCODING'])
+      input = JSON.parse(request.body.read)
+      params = input['params']
 
-      params = browser_post_json['params']
       i = 0
       lat = '0'
       lng = '0'

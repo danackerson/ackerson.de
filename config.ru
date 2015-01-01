@@ -1,6 +1,5 @@
 require 'rubygems'
 
-require 'rack'
 require 'json'
 require 'camping'
 require 'net/http'
