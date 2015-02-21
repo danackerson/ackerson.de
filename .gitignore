@@ -3,3 +3,7 @@
 .apdisk
 .fseventsd/
 photos
+
+*.log
+
+*.lock
